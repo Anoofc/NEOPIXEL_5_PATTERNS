@@ -23,6 +23,12 @@
 #define STRIP_1_COLOR_2 0, 255, 0
 #define STRIP_1_COLOR_3 0, 0, 255
 
+// FOR THEATER CHASE ONLY
+#define STRIP_3_COLOR_1 255, 0, 0
+#define STRIP_3_COLOR_2 0, 255, 0
+#define STRIP_3_COLOR_3 0, 0, 255
+
+
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 
@@ -54,9 +60,15 @@ void colorWipe(uint8_t r, uint8_t g, uint8_t b, uint16_t wait) {
 }
 
 void colorWipe_Run() {
-  colorWipe(STRIP_1_COLOR_1, STRIP_1_DELAY);
-  colorWipe(STRIP_1_COLOR_2, STRIP_1_DELAY);
-  colorWipe(STRIP_1_COLOR_3, STRIP_1_DELAY);
+  static uint8_t mode = 0;
+  if( mode == 0) {
+    colorWipe(255, 0, 0, STRIP_1_DELAY);
+  } else if (mode == 1) {
+    colorWipe(0, 255, 0, STRIP_1_DELAY);
+  } else if (mode == 2) {
+    colorWipe(0, 0, 255, STRIP_1_DELAY);
+  }
+  mode++; if (mode > 2) { mode = 0; }
 }
 
 
@@ -67,20 +79,49 @@ void rainbow(uint16_t wait) {
     return;
   } 
     strip2_update_time = millis();
-  // Hue of first pixel runs 5 complete loops through the color wheel.
-  // Color wheel has a range of 65536 but it's OK if we roll over, so
-  // just count from 0 to 5*65536. Adding 256 to firstPixelHue each time
-  // means we'll make 5*65536/256 = 1280 passes through this loop:
+  
   for(long firstPixelHue = 0; firstPixelHue < 5*65536; firstPixelHue += 256) {
-    // strip.rainbow() can take a single argument (first pixel hue) or
-    // optionally a few extras: number of rainbow repetitions (default 1),
-    // saturation and value (brightness) (both 0-255, similar to the
-    // ColorHSV() function, default 255), and a true/false flag for whether
-    // to apply gamma correction to provide 'truer' colors (default true).
     strip2.rainbow(firstPixelHue);
-    // Above line is equivalent to:
-    // strip.rainbow(firstPixelHue, 1, 255, 255, true);
     strip2.show(); // Update strip with new contents
+  }
+}
+
+// THEATER CHASE
+
+void theaterChase(uint8_t red, uint8_t green, uint8_t blue, uint32_t wait) {
+  static int a = 0;
+  static int b = 0;
+  static int c = 0;
+  static uint32_t lastUpdateTime = 0;
+
+  if (millis() - lastUpdateTime < wait) {
+    return;
+  }
+
+  lastUpdateTime = millis();
+
+  for (uint8_t i = 0; i < 3; i++) {
+    if (a < 10) {
+      if (b < 3) {
+        strip3.clear();
+        for (c = b; c < STRIP_3_LED_COUNT; c += 3) {
+          strip3.setPixelColor(c, strip3.Color(red, green, blue));
+        }
+        strip3.show();
+        b++;
+      } else { b = 0; a++; }
+    } else { a = 0; }
+  }
+}
+
+void theaterChase_Run() {
+  static uint8_t mode = 0;
+  if (mode == 0) {
+    theaterChase(STRIP_3_COLOR_1, STRIP_3_DELAY);
+  } else if (mode == 1) {
+    theaterChase(STRIP_3_COLOR_2, STRIP_3_DELAY);
+  } else if (mode == 2) {
+    theaterChase(STRIP_3_COLOR_3, STRIP_3_DELAY);
   }
 }
 
@@ -120,5 +161,6 @@ void loop() {
 
   rainbow(STRIP_2_DELAY);
   colorWipe_Run();
+  theaterChase_Run();
 
 }
