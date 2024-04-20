@@ -105,7 +105,7 @@ void rainbow(int wait) {
 // THEATER CHASE
 
 void theaterChase(uint8_t red, uint8_t green, uint8_t blue, uint32_t wait) {
-    static int a = 0;
+  static int a = 0;
   static int b = 0;
   static int c = 0;
 
