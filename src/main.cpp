@@ -93,6 +93,7 @@ void policeRunning()
     j = 0;
   }
 }
+
 void colorWipe(uint8_t r, uint8_t g, uint8_t b, uint16_t wait) {
   static uint8_t i = 0;
   if (millis() - strip1_update_time < wait) {
