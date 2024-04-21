@@ -28,6 +28,12 @@
 #define STRIP_3_COLOR_2 0, 255, 0
 #define STRIP_3_COLOR_3 0, 0, 255
 
+// POLICE RUNNNIG COLOURS 
+#define STRIP_4_COLOR_1 255, 0, 0
+#define STRIP_4_COLOR_2 0, 0, 255
+#define STRIP_4_COLOR_3 255, 0, 170
+#define STRIP_4_COLOR_4 255, 170, 0
+
 #define THEATERCHASE_MODE_UPDATE_TIME 5000
 
 
@@ -49,6 +55,44 @@ Adafruit_NeoPixel strip3 = Adafruit_NeoPixel(STRIP_3_LED_COUNT, STRIP_3_PIN, NEO
 Adafruit_NeoPixel strip4 = Adafruit_NeoPixel(STRIP_4_LED_COUNT, STRIP_4_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip5 = Adafruit_NeoPixel(STRIP_5_LED_COUNT, STRIP_5_PIN, NEO_GRB + NEO_KHZ800);
 
+void policeRunning()
+{
+  static uint8_t i = 0;
+  static uint8_t j = 0;
+  if (millis() - strip4_update_time < STRIP_4_DELAY)
+  {
+    return;
+  }
+  strip4_update_time = millis();
+  if (j == 0)
+  {
+    if (i < STRIP_4_LED_COUNT)
+    {
+      strip4.setPixelColor(i, strip4.Color(STRIP_4_COLOR_1));
+      strip4.setPixelColor((STRIP_4_LED_COUNT - i), strip4.Color(STRIP_4_COLOR_2));
+    }
+    strip4.show();
+    i++;
+  }
+  if (j == 1)
+  {
+    if (i > 0)
+    {
+      strip4.setPixelColor(i, strip4.Color(STRIP_4_COLOR_3));
+      strip4.setPixelColor((STRIP_4_LED_COUNT - i), strip4.Color(STRIP_4_COLOR_4));
+    }
+    strip4.show();
+    i--;
+  }
+  if (i == STRIP_4_LED_COUNT)
+  {
+    j = 1;
+  }
+  else if (i == 0)
+  {
+    j = 0;
+  }
+}
 void colorWipe(uint8_t r, uint8_t g, uint8_t b, uint16_t wait) {
   static uint8_t i = 0;
   if (millis() - strip1_update_time < wait) {
@@ -182,5 +226,6 @@ void loop() {
   rainbow(STRIP_2_DELAY);
   colorWipe_Run();
   theaterChase_Run();
+  policeRunning();
 
 }
