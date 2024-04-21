@@ -1,9 +1,9 @@
-#define DEBUG 0
+#define DEBUG 1
 
 #define STRIP_1_PIN 19
 #define STRIP_2_PIN 18
-#define STRIP_3_PIN 26
-#define STRIP_4_PIN 21
+#define STRIP_3_PIN 21
+#define STRIP_4_PIN 26
 #define STRIP_5_PIN 22
 
 #define STRIP_1_LED_COUNT 30
@@ -172,7 +172,6 @@ void setup() {
 
   stripBegin();
   stripClear();
-
 
 }
 
