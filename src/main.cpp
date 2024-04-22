@@ -1,4 +1,4 @@
-#define DEBUG 1
+#define DEBUG 0
 
 #define STRIP_1_PIN 19
 #define STRIP_2_PIN 18
